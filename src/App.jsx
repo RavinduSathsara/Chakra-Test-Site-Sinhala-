@@ -17,17 +17,17 @@ import RowRadioButtonsGroup from "./components/RowRadioButtonsGroup";
 import SelfImprovementIcon from "@mui/icons-material/SelfImprovement";
 import * as yup from "yup";
 import { useFormik } from "formik";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
 function App() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
-  };
-
   const theme = createTheme();
 
   const validationSchema = yup.object({
@@ -45,6 +45,62 @@ function App() {
       console.log(values);
     },
   });
+
+  ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+
+  const data = {
+    labels: ["Root", "Sacral", "Navel", "Heart", "Throat", "Brow", "Crown"],
+    datasets: [
+      {
+        data: [-1, 1, -4, 3, 4, 2, 4],
+        backgroundColor: [
+          "rgba(255, 99, 132, 0.2)",
+          "rgba(255, 159, 64, 0.2)",
+          "rgba(255, 205, 86, 0.2)",
+          "rgba(75, 192, 192, 0.2)",
+          "rgba(54, 162, 235, 0.2)",
+          "rgba(153, 102, 255, 0.2)",
+          "rgba(201, 203, 207, 0.2)",
+        ],
+        borderColor: [
+          "rgb(255, 99, 132)",
+          "rgb(255, 159, 64)",
+          "rgb(255, 205, 86)",
+          "rgb(75, 192, 192)",
+          "rgb(54, 162, 235)",
+          "rgb(153, 102, 255)",
+          "rgb(201, 203, 207)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const options = {
+    title: {
+      display: true,
+      text: "Results Chart",
+    },
+    legend: {
+      display: false,
+    },
+    scales: {
+      xAxes: [
+        {
+          ticks: {
+            beginAtZero: true,
+          },
+        },
+      ],
+      yAxes: [
+        {
+          ticks: {
+            beginAtZero: true,
+          },
+        },
+      ],
+    },
+  };
 
   return (
     <>
@@ -98,6 +154,7 @@ function App() {
                 Results
               </Button>
             </Box>
+            <Bar data={data} options={options} horizontal={false}></Bar>
           </Box>
           <Copyright sx={{ mt: 8, mb: 4 }} />
         </Container>

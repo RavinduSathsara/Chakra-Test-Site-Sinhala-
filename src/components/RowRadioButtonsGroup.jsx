@@ -40,7 +40,6 @@ export default function RowRadioButtonsGroup({
         <FormControlLabel value="1" control={<Radio />} label="" />
         <FormControlLabel value="2" control={<Radio />} label="definitely" />
         <MenuItem color="red" style={{ color: "red" }}>
-          {" "}
           {helperText}
         </MenuItem>
         {/* <MenuItem color="red">{error}</MenuItem> */}
