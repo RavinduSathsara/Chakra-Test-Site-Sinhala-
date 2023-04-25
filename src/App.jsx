@@ -15,6 +15,8 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Copyright from "./components/Copyright";
 import RowRadioButtonsGroup from "./components/RowRadioButtonsGroup";
 import SelfImprovementIcon from "@mui/icons-material/SelfImprovement";
+import * as yup from "yup";
+import { useFormik } from "formik";
 
 function App() {
   const handleSubmit = (event) => {
@@ -27,6 +29,22 @@ function App() {
   };
 
   const theme = createTheme();
+
+  const validationSchema = yup.object({
+    que1: yup.string().required("This question is required."),
+    que2: yup.string().required("This question is required."),
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      que1: "",
+      que2: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      console.log(values);
+    },
+  });
 
   return (
     <>
@@ -49,39 +67,28 @@ function App() {
             </Typography>
             <Box
               component="form"
-              onSubmit={handleSubmit}
+              onSubmit={formik.handleSubmit}
               noValidate
               sx={{ mt: 5 }}
             >
-              <RowRadioButtonsGroup Label="1. Do you generally feel free to act upon what you want?" />
-              <RowRadioButtonsGroup Label="2. Are you a very emotional and passionate person?" />
+              <RowRadioButtonsGroup
+                Label="1. Do you generally feel free to act upon what you want?"
+                name="que1"
+                onChange={formik.handleChange}
+                error={formik.touched.que1 && Boolean(formik.errors.que1)}
+                helperText={formik.touched.que1 && formik.errors.que1}
+              />
+              <RowRadioButtonsGroup
+                Label="2. Are you a very emotional and passionate person?"
+                name="que2"
+                onChange={formik.handleChange}
+                error={formik.touched.que2 && Boolean(formik.errors.que2)}
+                helperText={formik.touched.que2 && formik.errors.que2}
+              />
               <RowRadioButtonsGroup Label="3. Are you a very emotional and passionate person?" />
               <RowRadioButtonsGroup Label="4. Do you regularly avoid particular situations?" />
               <RowRadioButtonsGroup Label="5. Are you good at thinking in words, symbols and concepts" />
-              {/* <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-              /> */}
-              {/* <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              /> */}
+
               <Button
                 type="submit"
                 fullWidth
