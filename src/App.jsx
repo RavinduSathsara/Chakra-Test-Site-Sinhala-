@@ -176,8 +176,7 @@ function App() {
               </Button>
             </Box>
             <Bar data={data} options={options}></Bar>
-
-            <Typography mt={1} variant="body2" color="text" align="center">
+            <Typography mt={1} variant="body1" color="red" align="left">
               Percentages go from -100% to +100%
             </Typography>
             <ChakraStatusLabels />

@@ -3,7 +3,7 @@ import { Typography } from "@mui/material";
 
 const ChakraStatusLabels = () => {
   return (
-    <>
+    <div style={{ textAlign: "left" }}>
       <Typography variant="subtitle1">
         Root: <span style={{ color: "#f44336" }}>under-active (-12%)</span>
       </Typography>
@@ -25,7 +25,7 @@ const ChakraStatusLabels = () => {
       <Typography variant="subtitle1">
         Crown: <span style={{ color: "#4caf50" }}>open (25%)</span>
       </Typography>
-    </>
+    </div>
   );
 };
 
