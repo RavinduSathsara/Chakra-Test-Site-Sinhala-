@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -26,23 +26,36 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import ChakraStatusLabels from "./components/ChakraStatusLabels";
 
 function App() {
+  const [rootResult, setRootResult] = useState(0);
+
+  function averagePercentage(num1, num2, num3) {
+    const average = (parseInt(num1) + parseInt(num2) + parseInt(num3)) / 3;
+    const percentage = average * 100;
+    return percentage;
+  }
+
   const theme = createTheme();
 
   const validationSchema = yup.object({
     que1: yup.string().required("This question is required."),
     que2: yup.string().required("This question is required."),
+    que3: yup.string().required("This question is required."),
   });
 
   const formik = useFormik({
     initialValues: {
       que1: "",
       que2: "",
+      que3: "",
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      console.log(values);
+      setRootResult(
+        averagePercentage(values?.que1, values?.que2, values?.que3)
+      );
     },
   });
 
@@ -52,7 +65,7 @@ function App() {
     labels: ["Root", "Sacral", "Navel", "Heart", "Throat", "Brow", "Crown"],
     datasets: [
       {
-        data: [-1, 1, -4, 3, 4, 2, 4],
+        data: [rootResult?.toFixed(2), 40, 37, -47, 47, -22, 14],
         backgroundColor: [
           "rgba(255, 99, 132, 0.2)",
           "rgba(255, 159, 64, 0.2)",
@@ -76,30 +89,32 @@ function App() {
     ],
   };
 
+  console.log(rootResult);
+
   const options = {
     title: {
       display: true,
       text: "Results Chart",
     },
     legend: {
-      display: false,
+      display: true,
     },
-    scales: {
-      xAxes: [
-        {
-          ticks: {
-            beginAtZero: true,
-          },
-        },
-      ],
-      yAxes: [
-        {
-          ticks: {
-            beginAtZero: true,
-          },
-        },
-      ],
-    },
+    // scales: {
+    //   xAxes: [
+    //     {
+    //       ticks: {
+    //         beginAtZero: true,
+    //       },
+    //     },
+    //   ],
+    //   yAxes: [
+    //     {
+    //       ticks: {
+    //         beginAtZero: true,
+    //       },
+    //     },
+    //   ],
+    // },
   };
 
   return (
@@ -141,7 +156,13 @@ function App() {
                 error={formik.touched.que2 && Boolean(formik.errors.que2)}
                 helperText={formik.touched.que2 && formik.errors.que2}
               />
-              <RowRadioButtonsGroup Label="3. Are you a very emotional and passionate person?" />
+              <RowRadioButtonsGroup
+                Label="3. Are you a very emotional and passionate person?"
+                name="que3"
+                onChange={formik.handleChange}
+                error={formik.touched.que3 && Boolean(formik.errors.que3)}
+                helperText={formik.touched.que3 && formik.errors.que3}
+              />
               <RowRadioButtonsGroup Label="4. Do you regularly avoid particular situations?" />
               <RowRadioButtonsGroup Label="5. Are you good at thinking in words, symbols and concepts" />
 
@@ -154,7 +175,12 @@ function App() {
                 Results
               </Button>
             </Box>
-            <Bar data={data} options={options} horizontal={false}></Bar>
+            <Bar data={data} options={options}></Bar>
+
+            <Typography mt={1} variant="body2" color="text" align="center">
+              Percentages go from -100% to +100%
+            </Typography>
+            <ChakraStatusLabels />
           </Box>
           <Copyright sx={{ mt: 8, mb: 4 }} />
         </Container>
