@@ -22,12 +22,12 @@ export default function RowRadioButtonsGroup({
         name={name}
         id={name}
         onChange={onChange}
-        sx={{ mb: 3 }}
+        sx={{ mb: 1 }}
       >
         <FormControlLabel
           value="-2"
           control={<Radio />}
-          label="not at all"
+          label="නැත"
           labelPlacement="start"
         />
         <FormControlLabel
@@ -38,7 +38,7 @@ export default function RowRadioButtonsGroup({
         />
         <FormControlLabel value="0" control={<Radio />} label="" />
         <FormControlLabel value="1" control={<Radio />} label="" />
-        <FormControlLabel value="2" control={<Radio />} label="definitely" />
+        <FormControlLabel value="2" control={<Radio />} label="නියතව" />
         <MenuItem color="red" style={{ color: "red" }}>
           {helperText}
         </MenuItem>

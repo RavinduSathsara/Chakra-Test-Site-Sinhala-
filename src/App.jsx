@@ -2,12 +2,11 @@ import { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
+import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
+import Modal from "@mui/material/Modal";
+import Fade from "@mui/material/Fade";
+
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
@@ -28,21 +27,36 @@ import {
 } from "chart.js";
 import ChakraStatusLabels from "./components/ChakraStatusLabels";
 
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
+
 function App() {
   const [rootResult, setRootResult] = useState(0);
+  const [open, setOpen] = useState(false);
 
-  function averagePercentage(num1, num2, num3) {
-    const average = (parseInt(num1) + parseInt(num2) + parseInt(num3)) / 3;
+  function averagePercentage(num1, num2, num3, num4) {
+    const average =
+      (parseInt(num1) + parseInt(num2) + parseInt(num3) + parseInt(num4)) / 4;
     const percentage = average * 100;
-    return percentage;
+    return percentage / 2;
   }
 
   const theme = createTheme();
 
   const validationSchema = yup.object({
-    que1: yup.string().required("This question is required."),
-    que2: yup.string().required("This question is required."),
-    que3: yup.string().required("This question is required."),
+    que1: yup.string().required("පිලිතුරක් අවශ්‍යයි."),
+    que2: yup.string().required("පිලිතුරක් අවශ්‍යයි."),
+    que3: yup.string().required("පිලිතුරක් අවශ්‍යයි."),
+    que4: yup.string().required("පිලිතුරක් අවශ්‍යයි."),
   });
 
   const formik = useFormik({
@@ -50,14 +64,24 @@ function App() {
       que1: "",
       que2: "",
       que3: "",
+      que4: "",
+      que5: "",
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
+      setOpen(true);
       setRootResult(
-        averagePercentage(values?.que1, values?.que2, values?.que3)
+        averagePercentage(
+          values?.que1,
+          values?.que2,
+          values?.que3,
+          values?.que4
+        )
       );
     },
   });
+
+  const handleClose = () => setOpen(false);
 
   ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -120,7 +144,14 @@ function App() {
   return (
     <>
       <ThemeProvider theme={theme}>
-        <Container component="main" maxWidth="xs">
+        <Container
+          style={{
+            backgroundColor: "#E1F5FE",
+            minHeight: "100vh", // sets the height to fill the viewport
+          }}
+          component="main"
+          maxWidth="xs"
+        >
           <CssBaseline />
           <Box
             sx={{
@@ -143,28 +174,34 @@ function App() {
               sx={{ mt: 5 }}
             >
               <RowRadioButtonsGroup
-                Label="1. Do you generally feel free to act upon what you want?"
+                Label="1. අවශ්‍ය විටෙක තමාගේ ස්ථාවරයේ සිටීමට ඔබට හැකි ද?"
                 name="que1"
                 onChange={formik.handleChange}
                 error={formik.touched.que1 && Boolean(formik.errors.que1)}
                 helperText={formik.touched.que1 && formik.errors.que1}
               />
               <RowRadioButtonsGroup
-                Label="2. Are you a very emotional and passionate person?"
+                Label="2. ලෙන්ගතුබාවය සහ රාගය යන දෙකේදී ඔබට සුවපහසු බවක් දැනෙනවාද?"
                 name="que2"
                 onChange={formik.handleChange}
                 error={formik.touched.que2 && Boolean(formik.errors.que2)}
                 helperText={formik.touched.que2 && formik.errors.que2}
               />
               <RowRadioButtonsGroup
-                Label="3. Are you a very emotional and passionate person?"
+                Label="3. දේවල් සිතින් මවා ගැනීම ඔබට අපහසුද?"
                 name="que3"
                 onChange={formik.handleChange}
                 error={formik.touched.que3 && Boolean(formik.errors.que3)}
                 helperText={formik.touched.que3 && formik.errors.que3}
               />
-              <RowRadioButtonsGroup Label="4. Do you regularly avoid particular situations?" />
-              <RowRadioButtonsGroup Label="5. Are you good at thinking in words, symbols and concepts" />
+              <RowRadioButtonsGroup
+                Label="4. ඔබේ ආවේගයන් ගැන ඔබ ලැජ්ජාවට පත් වෙනවාද?"
+                name="que4"
+                onChange={formik.handleChange}
+                error={formik.touched.que4 && Boolean(formik.errors.que4)}
+                helperText={formik.touched.que4 && formik.errors.que4}
+              />
+              <RowRadioButtonsGroup Label="5. ඔබ වැඩිපුර කතා කිරීමට නැඹුරුද?" />
 
               <Button
                 type="submit"
@@ -175,11 +212,30 @@ function App() {
                 Results
               </Button>
             </Box>
-            <Bar data={data} options={options}></Bar>
-            <Typography mt={1} variant="body1" color="red" align="left">
-              Percentages go from -100% to +100%
-            </Typography>
-            <ChakraStatusLabels />
+
+            <Modal
+              aria-labelledby="transition-modal-title"
+              aria-describedby="transition-modal-description"
+              open={open}
+              onClose={handleClose}
+              closeAfterTransition
+              slots={{ backdrop: Backdrop }}
+              slotProps={{
+                backdrop: {
+                  timeout: 500,
+                },
+              }}
+            >
+              <Fade in={open}>
+                <Box sx={style}>
+                  <Bar data={data} options={options}></Bar>
+                  <Typography mt={1} variant="body" align="left">
+                    Percentages go from -100% to 100%
+                  </Typography>
+                  <ChakraStatusLabels root={rootResult?.toFixed(2)} />
+                </Box>
+              </Fade>
+            </Modal>
           </Box>
           <Copyright sx={{ mt: 8, mb: 4 }} />
         </Container>
